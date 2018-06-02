@@ -3,12 +3,20 @@ package edu.pucmm.grails;
 import com.vaadin.annotations.Push;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.data.provider.DataProvider;
+import com.vaadin.data.provider.DataProviderListener;
+import com.vaadin.data.provider.Query;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.Registration;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import demograils.KoffeeService;
+import edu.pucmm.grails.domain.Koffee;
+import edu.pucmm.grails.utils.Grails;
+import grails.boot.GrailsApp;
+
+import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 /**
  * Created by aluis on 5/27/18.
@@ -21,16 +29,61 @@ public class AppUI extends UI {
 
     private VerticalLayout mainLayout = new VerticalLayout();
 
+
     @Override
     protected void init(VaadinRequest request) {
-        Button btnHello = new Button("Hello");
-        btnHello.addClickListener(new Button.ClickListener() {
+
+        Grid<Koffee> grid = new Grid<>();
+
+        DataProvider<Koffee, Object> provider = new DataProvider<Koffee, Object>() {
+            @Override
+            public boolean isInMemory() {
+                return false;
+            }
+
+            @Override
+            public int size(Query<Koffee, Object> query) {
+                return Grails.get(KoffeeService.class).countKoffees();
+            }
+
+            @Override
+            public Stream<Koffee> fetch(Query<Koffee, Object> query) {
+                return Grails.get(KoffeeService.class).allKoffees().stream();
+            }
+
+            @Override
+            public void refreshItem(Koffee item) {
+
+            }
+
+            @Override
+            public void refreshAll() {
+
+            }
+
+            @Override
+            public Registration addDataProviderListener(DataProviderListener<Koffee> listener) {
+                return null;
+            }
+        };
+
+        grid.setDataProvider(provider);
+
+        grid.addColumn(Koffee::getName).setCaption("Name");
+        grid.addColumn(Koffee::getDescription).setCaption("Description");
+
+        Button btnAdd = new Button("Add");
+
+        btnAdd.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Notification.show("Hola", "Vaadin on Grails", Notification.Type.HUMANIZED_MESSAGE);
+                Grails.get(KoffeeService.class).createKoffe("Hola", "", new BigDecimal(200));
+                grid.setDataProvider(provider);
             }
         });
-        mainLayout.addComponent(btnHello);
+
+        mainLayout.addComponent(btnAdd);
+        mainLayout.addComponent(grid);
         setContent(mainLayout);
     }
 }
