@@ -6,8 +6,8 @@ import grails.gorm.transactions.Transactional
 @Transactional
 class KoffeeService {
 
-    void createKoffe(String name, String description, BigDecimal price) {
-        new Koffee(name: name, description: description, price: price).save(flush: true, failOnError: true)
+    void createKoffe(Koffee koffee) {
+        koffee.save(flush: true, failOnError: true)
     }
 
     int countKoffees() {

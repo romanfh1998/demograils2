@@ -2,6 +2,7 @@ package edu.pucmm.grails;
 
 import com.vaadin.ui.*;
 import demograils.KoffeeService;
+import edu.pucmm.grails.domain.Koffee;
 import edu.pucmm.grails.utils.Grails;
 
 import java.math.BigDecimal;
@@ -18,7 +19,18 @@ public class NewKoffee extends Window {
     private Button btnOK = new Button("OK");
     private Button btnCancel = new Button("Cancel");
 
+    private Koffee koffee;
+
+    public NewKoffee(Koffee koffee) {
+        this.koffee = koffee;
+        prepare();
+    }
+
     public NewKoffee() {
+        prepare();
+    }
+
+    private void prepare() {
         center();
         VerticalLayout main = new VerticalLayout();
         main.addComponent(tfName);
@@ -28,7 +40,13 @@ public class NewKoffee extends Window {
         btnOK.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Grails.get(KoffeeService.class).createKoffe(tfName.getValue(), taDescription.getValue(), new BigDecimal(tfPrice.getValue()));
+                if (koffee == null) {
+                    koffee = new Koffee();
+                }
+                koffee.setName(tfName.getValue());
+                koffee.setDescription(taDescription.getValue());
+                koffee.setPrice(new BigDecimal(tfPrice.getValue()));
+                Grails.get(KoffeeService.class).createKoffe(koffee);
                 close();
             }
         });

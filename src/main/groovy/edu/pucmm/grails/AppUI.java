@@ -106,6 +106,8 @@ public class AppUI extends UI {
             }
         });
 
+
+
         mainLayout.addComponent(btnDelete);
         mainLayout.addComponent(btnAdd);
         mainLayout.addComponent(grid);
