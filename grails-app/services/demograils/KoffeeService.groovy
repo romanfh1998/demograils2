@@ -18,4 +18,8 @@ class KoffeeService {
     List<Koffee> allKoffees() {
         return Koffee.findAll()
     }
+
+    void remove(Koffee koffee) {
+        koffee.delete(flush: true, failOnError: true)
+    }
 }

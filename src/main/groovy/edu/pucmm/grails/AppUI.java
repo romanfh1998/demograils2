@@ -16,6 +16,8 @@ import edu.pucmm.grails.utils.Grails;
 import grails.boot.GrailsApp;
 
 import java.math.BigDecimal;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 /**
@@ -71,17 +73,40 @@ public class AppUI extends UI {
 
         grid.addColumn(Koffee::getName).setCaption("Name");
         grid.addColumn(Koffee::getDescription).setCaption("Description");
+        grid.addColumn(Koffee::getPrice).setCaption("Price");
 
         Button btnAdd = new Button("Add");
 
         btnAdd.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                Grails.get(KoffeeService.class).createKoffe("Hola", "", new BigDecimal(200));
+                NewKoffee koffee = new NewKoffee();
+                koffee.addCloseListener(new Window.CloseListener() {
+                    @Override
+                    public void windowClose(Window.CloseEvent e) {
+                        grid.setDataProvider(provider);
+                    }
+                });
+                getUI().addWindow(koffee);
+            }
+        });
+
+        Button btnDelete = new Button("Delete");
+        btnDelete.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                Set<Koffee> selectedItems = grid.getSelectedItems();
+                selectedItems.forEach(new Consumer<Koffee>() {
+                    @Override
+                    public void accept(Koffee koffee) {
+                        Grails.get(KoffeeService.class).remove(koffee);
+                    }
+                });
                 grid.setDataProvider(provider);
             }
         });
 
+        mainLayout.addComponent(btnDelete);
         mainLayout.addComponent(btnAdd);
         mainLayout.addComponent(grid);
         setContent(mainLayout);
