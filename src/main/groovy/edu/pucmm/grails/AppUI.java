@@ -10,12 +10,15 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.Registration;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.SingleSelectionModel;
 import demograils.KoffeeService;
 import edu.pucmm.grails.domain.Koffee;
 import edu.pucmm.grails.utils.Grails;
-import grails.boot.GrailsApp;
+import groovy.lang.GroovyObject;
 
-import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -74,7 +77,6 @@ public class AppUI extends UI {
         grid.addColumn(Koffee::getName).setCaption("Name");
         grid.addColumn(Koffee::getDescription).setCaption("Description");
         grid.addColumn(Koffee::getPrice).setCaption("Price");
-
         Button btnAdd = new Button("Add");
 
         btnAdd.addClickListener(new Button.ClickListener() {
@@ -91,6 +93,7 @@ public class AppUI extends UI {
             }
         });
 
+
         Button btnDelete = new Button("Delete");
         btnDelete.addClickListener(new Button.ClickListener() {
             @Override
@@ -100,17 +103,41 @@ public class AppUI extends UI {
                     @Override
                     public void accept(Koffee koffee) {
                         Grails.get(KoffeeService.class).remove(koffee);
+                        Grails.get(KoffeeService.class).remove(koffee);
                     }
                 });
                 grid.setDataProvider(provider);
             }
         });
 
+        grid.addColumn(Koffee::getName).setCaption("Name");
+        grid.addColumn(Koffee::getDescription).setCaption("Description");
+        grid.addColumn(Koffee::getPrice).setCaption("Price");
+
+        Button btnEdit = new Button("Edit");
+        btnEdit.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                List<Koffee> selectedItems = new ArrayList<>(grid.getSelectedItems());
+                if (selectedItems.size() == 1) {
+                    NewKoffee koffee = new NewKoffee(selectedItems.get(0));
+                    koffee.addCloseListener(new Window.CloseListener() {
+                        @Override
+                        public void windowClose(Window.CloseEvent e) {
+                            grid.setDataProvider(provider);
+                        }
+                    });
+                    getUI().addWindow(koffee);
+                }
+            }
+        });
 
 
         mainLayout.addComponent(btnDelete);
         mainLayout.addComponent(btnAdd);
+        mainLayout.addComponent(btnedit);
         mainLayout.addComponent(grid);
         setContent(mainLayout);
     }
 }
+

@@ -1,5 +1,6 @@
 package edu.pucmm.grails;
 
+import com.vaadin.shared.Registration;
 import com.vaadin.ui.*;
 import demograils.KoffeeService;
 import edu.pucmm.grails.domain.Koffee;
@@ -18,7 +19,7 @@ public class NewKoffee extends Window {
 
     private Button btnOK = new Button("OK");
     private Button btnCancel = new Button("Cancel");
-
+private Button btnedit = new Button("edit");
     private Koffee koffee;
 
     public NewKoffee(Koffee koffee) {
@@ -37,7 +38,7 @@ public class NewKoffee extends Window {
         main.addComponent(taDescription);
         main.addComponent(tfPrice);
 
-        btnOK.addClickListener(new Button.ClickListener() {
+        final Registration registration = btnOK.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 if (koffee == null) {

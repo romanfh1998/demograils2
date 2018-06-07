@@ -1,7 +1,7 @@
 package demograils
 
 import edu.pucmm.grails.domain.Koffee
-import grails.gorm.transactions.Transactional
+import grails.transaction.Transactional
 
 @Transactional
 class KoffeeService {

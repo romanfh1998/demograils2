@@ -1,4 +1,5 @@
 ---
+
 grails:
     profile: web
     codegen:
@@ -126,3 +127,6 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+
+
+
